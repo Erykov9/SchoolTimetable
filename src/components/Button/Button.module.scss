@@ -1,0 +1,51 @@
+@import 'src/styles/settings.scss';
+
+.button {
+  padding: 20px 10px;
+  border: none;
+  background-color: $yinmnBlue;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0 4px;
+  transition: $transition;
+  border-radius: 10px;
+  box-shadow: 0px 2px 12px 1px $yinmnBlue;
+
+  span {
+    transition: $transition;
+    color: lighten($conflowerBlue, 20%);
+  }
+
+  &:hover {
+    background-color: lighten($conflowerBlue, 20%);
+    box-shadow: 0px 2px 12px 1px $yinmnBlue;
+
+    span {
+      color: darken($conflowerBlue, 20%);
+    }
+  }
+}
+
+.button_transparent {
+  padding: 10px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  font-weight: 600;
+  margin: 0 4px;
+  border-radius: 10px;
+
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+  }
+
+  &:hover {
+    span {
+      color: $conflowerBlue
+    }
+  }
+}

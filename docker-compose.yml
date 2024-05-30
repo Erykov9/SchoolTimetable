@@ -1,0 +1,13 @@
+version: "1.0.0"
+services:
+  fe:
+    image: fe
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000
