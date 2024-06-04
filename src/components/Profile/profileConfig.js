@@ -27,6 +27,18 @@ export const schoolPlannerDrawer = [
   },
   {
     id: 2,
+    value: "Lekcje",
+    href: "lessons",
+    icon: function (isLoading) {
+      return isLoading ? (
+        <Skeleton variant="rectangular" width={260} height={35} />
+      ) : (
+        <HomeIcon />
+      );
+    },
+  },
+  {
+    id: 3,
     value: "Plany lekcji",
     href: "timetables",
     icon: function (isLoading) {
@@ -38,7 +50,7 @@ export const schoolPlannerDrawer = [
     },
   },
   {
-    id: 3,
+    id: 4,
     value: "Klasy",
     href: "classes",
     icon: function (isLoading) {
@@ -50,7 +62,7 @@ export const schoolPlannerDrawer = [
     },
   },
   {
-    id: 4,
+    id: 5,
     value: "Przedmioty",
     href: "subjects",
     icon: function (isLoading) {
@@ -62,7 +74,7 @@ export const schoolPlannerDrawer = [
     },
   },
   {
-    id: 5,
+    id: 6,
     value: "Nauczyciele",
     href: "teachers",
     icon: function (isLoading) {
@@ -74,7 +86,7 @@ export const schoolPlannerDrawer = [
     },
   },
   {
-    id: 6,
+    id: 7,
     value: "Sale lekcyjne",
     href: "classrooms",
     icon: function (isLoading) {
@@ -86,7 +98,7 @@ export const schoolPlannerDrawer = [
     },
   },
   {
-    id: 7,
+    id: 8,
     value: "Etykiety",
     href: "labels",
     icon: function (isLoading) {

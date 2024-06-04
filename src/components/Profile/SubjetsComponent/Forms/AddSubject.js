@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Button,
   TextField,
@@ -14,39 +14,39 @@ import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import HelpIcon from "@mui/icons-material/Help";
 
-const AddLabel = ({ lessonLabelLength }) => {
-  const [lessonLabelName, setLessonLabelName] = useState("");
+const AddSubject = ({ subjectLength }) => {
+  const [subjectName, setSubjectName] = useState("");
   const [error, setError] = useState(false);
 
   const handleAdd = async () => {
     setError(false);
-    if (lessonLabelName.length === 0 || lessonLabelName.trim().length === 0) {
-      setError("Nazwa etykiety nie może być pusta");
+    if (subjectName.length === 0 || subjectName.trim().length === 0) {
+      setError("Nazwa przedmiotu nie może być pusta");
       return console.log("forbidden");
     }
 
-    const response = await SchoolInfoStore.addLabel({ name: lessonLabelName });
+    const response = await SchoolInfoStore.addSubject({ name: subjectName });
     if (response?.error) {
       return setError(response.errorMessage);
     }
 
-    setLessonLabelName("");
+    setSubjectName("");
     return;
   };
 
   return (
     <TableRow>
       <TableCell component="th" scope="row">
-        {lessonLabelLength + 1}.
+        {subjectLength + 1}.
       </TableCell>
       <TableCell component="th" scope="row">
         <Stack flexDirection={"row"} alignItems={"center"} gap={2}>
           <HelpIcon sx={{ color: "grey" }} />
           <TextField
-            value={lessonLabelName}
-            id="new_label"
-            label="Dodaj etykietę"
-            onChange={(e) => setLessonLabelName(e.target.value)}
+            value={subjectName}
+            id="new_subject"
+            label="Dodaj przedmiot"
+            onChange={(e) => setSubjectName(e.target.value)}
             error={error}
           ></TextField>
           {error && <CustomAlert status={"error"} message={error} />}
@@ -56,7 +56,7 @@ const AddLabel = ({ lessonLabelLength }) => {
         <Stack gap={1} flexDirection={"row"} justifyContent={"flex-end"}>
           <Button
             onClick={() => {
-              setLessonLabelName("");
+              setSubjectName("");
               setError(false);
             }}
             sx={{ color: "grey" }}
@@ -73,4 +73,4 @@ const AddLabel = ({ lessonLabelLength }) => {
   );
 };
 
-export default AddLabel;
+export default AddSubject;

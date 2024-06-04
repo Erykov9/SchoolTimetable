@@ -39,7 +39,7 @@ const Labels = observer(() => {
             <caption>
               <Stack gap={1} flexDirection={"row"}>
                 <Button color="secondary" startIcon={<ImportExportIcon />}>
-                  Zaimportuj
+                  WKLEJ Z EXCELA
                 </Button>
                 <Divider orientation="vertical" flexItem />
                 <Button
@@ -60,7 +60,7 @@ const Labels = observer(() => {
             </TableHead>
             <TableBody>
               {labels?.data?.map((row, index) => (
-                <SingleLabel label={row} index={index} />
+                <SingleLabel key={`label-${row.name}`} label={row} index={index} />
               ))}
               <AddLabel lessonLabelLength={labels?.data?.length || 0} />
             </TableBody>

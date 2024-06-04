@@ -1,6 +1,5 @@
 import { action, computed, makeAutoObservable, toJS } from "mobx";
 import DataService from "../services/DataService";
-import ObjectID from "bson-objectid";
 import ErrorHandler from "../services/ErrorHandler";
 
 class SchoolInfoStore {
@@ -51,7 +50,7 @@ class SchoolInfoStore {
   @action
   setSchoolName(name) {
     this.schoolName = name;
-  };
+  }
 
   // SCHOOL PLAN CONFIG
   @action
@@ -83,7 +82,7 @@ class SchoolInfoStore {
     let wrongClasses = [];
 
     for (const c of classes) {
-      const response = this.setClasses({ name: c });
+      const response = this.addClass({ name: c });
 
       if (response?.error) {
         wrongClasses.push(c);
@@ -103,9 +102,14 @@ class SchoolInfoStore {
     }
   }
 
+  // DO POPRAWY PO ODPALENIU NOWEGO OBRAZU BACKENDU
   @action
   async addClass(data) {
-    if (this.classes.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.classes.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("", 400);
       return error.checkErrorStatus();
     }
@@ -114,11 +118,11 @@ class SchoolInfoStore {
       name: data.name,
     };
 
-    const response = await DataService.addClass(newData);
-    if(response?.error) {
+    const response = await DataService.postData(newData, 'studentClass');
+    if (response?.error) {
       return response;
     }
-    this.classes.data = [...this.classes.data, newData];
+    this.classes.data = [...this.classes.data, response];
   }
 
   @action
@@ -152,7 +156,9 @@ class SchoolInfoStore {
 
     if (wrongLabels.length === labels.length) {
       const error = new ErrorHandler("Error", 400);
-      return error.checkErrorStatus("Etykiety nie zostały dodane, spróbuj ponownie");
+      return error.checkErrorStatus(
+        "Etykiety nie zostały dodane, spróbuj ponownie"
+      );
     }
 
     if (wrongLabels.length > 0) {
@@ -166,7 +172,11 @@ class SchoolInfoStore {
 
   @action
   async addLabel(data) {
-    if (this.labels.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.labels.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Etykieta o tej nazwie już istnieje");
     }
@@ -176,23 +186,29 @@ class SchoolInfoStore {
       name: data.name,
     };
 
-    const response = await DataService.postData(newData, 'lessonLabel');
-    if(response?.error) {
+    const response = await DataService.postData(newData, "lessonLabel");
+    if (response?.error) {
       return response;
     }
+
+    console.log("ADD LABEL:", response)
 
     this.labels.data = [...this.labels.data, response];
   }
 
   @action
   async editLabel(data) {
-    if (this.labels.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.labels.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Etykieta o tej nazwie już istnieje");
     }
 
-    const response = await DataService.editData(data, 'lessonLabel', data._id);
-    if(response?.error) {
+    const response = await DataService.editData(data, "lessonLabel", data._id);
+    if (response?.error) {
       return response;
     }
     const index = this.labels.data.findIndex((item) => item._id === data._id);
@@ -201,9 +217,10 @@ class SchoolInfoStore {
 
   @action
   async deleteLabel(id) {
-    const response = await DataService.deleteData('lessonLabel', id);
+    console.log("ID: ", toJS(id))
+    const response = await DataService.deleteData("lessonLabel", id);
 
-    if(response.error) {
+    if (response.error) {
       return response;
     }
 
@@ -211,11 +228,14 @@ class SchoolInfoStore {
     this.labels.data = newLabels;
   }
 
-
   // TEACHERS
   @action
   async addTeacher(data) {
-    if (this.teachers.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.teachers.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Nauczyciel o tej nazwie już istnieje");
     }
@@ -225,8 +245,8 @@ class SchoolInfoStore {
       name: data.name,
     };
 
-    const response = await DataService.postData(newData, 'teacher');
-    if(response?.error) {
+    const response = await DataService.postData(newData, "teacher");
+    if (response?.error) {
       return response;
     }
 
@@ -235,13 +255,17 @@ class SchoolInfoStore {
 
   @action
   async editTeacher(data) {
-    if (this.teachers.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.teachers.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Nauczyciel o tej nazwie już istnieje");
     }
 
-    const response = await DataService.editData(data, 'teacher', data._id);
-    if(response?.error) {
+    const response = await DataService.editData(data, "teacher", data._id);
+    if (response?.error) {
       return response;
     }
 
@@ -251,9 +275,9 @@ class SchoolInfoStore {
 
   @action
   async deleteTeacher(id) {
-    const response = await DataService.deleteData('teacher', id);
+    const response = await DataService.deleteData("teacher", id);
 
-    if(response.error) {
+    if (response.error) {
       return response;
     }
 
@@ -275,7 +299,9 @@ class SchoolInfoStore {
 
     if (wrongTeachers.length === teachers.length) {
       const error = new ErrorHandler("Error", 400);
-      return error.checkErrorStatus("Nauczyciele nie zostali dodani, spróbuj ponownie");
+      return error.checkErrorStatus(
+        "Nauczyciele nie zostali dodani, spróbuj ponownie"
+      );
     }
 
     if (wrongTeachers.length > 0) {
@@ -287,10 +313,13 @@ class SchoolInfoStore {
     }
   }
 
-
   @action
   async addClassroom(data) {
-    if (this.classRooms.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.classRooms.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Sala o tej nazwie już istnieje");
     }
@@ -300,8 +329,8 @@ class SchoolInfoStore {
       name: data.name,
     };
 
-    const response = await DataService.postData(newData, 'classroom');
-    if(response?.error) {
+    const response = await DataService.postData(newData, "classroom");
+    if (response?.error) {
       return response;
     }
 
@@ -310,29 +339,37 @@ class SchoolInfoStore {
 
   @action
   async editClassroom(data) {
-    if (this.classRooms.data.some((item) => item.name.toLowerCase() === data.name.toLowerCase())) {
+    if (
+      this.classRooms.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
       const error = new ErrorHandler("Error", 400);
       return error.checkErrorStatus("Sala o tej nazwie już istnieje");
     }
 
-    const response = await DataService.editData(data, 'classroom', data._id);
-    if(response?.error) {
+    const response = await DataService.editData(data, "classroom", data._id);
+    if (response?.error) {
       return response;
     }
 
-    const index = this.classRooms.data.findIndex((item) => item._id === data._id);
+    const index = this.classRooms.data.findIndex(
+      (item) => item._id === data._id
+    );
     this.classRooms.data[index] = data;
   }
 
   @action
   async deleteClassroom(id) {
-    const response = await DataService.deleteData('classroom', id);
+    const response = await DataService.deleteData("classroom", id);
 
-    if(response.error) {
+    if (response.error) {
       return response;
     }
 
-    const newClassrooms = this.classRooms.data.filter((item) => item._id !== id);
+    const newClassrooms = this.classRooms.data.filter(
+      (item) => item._id !== id
+    );
     this.classRooms.data = newClassrooms;
   }
 
@@ -350,7 +387,9 @@ class SchoolInfoStore {
 
     if (wrongClassrooms.length === classrooms.length) {
       const error = new ErrorHandler("Error", 400);
-      return error.checkErrorStatus("Sale nie zostały dodane, spróbuj ponownie");
+      return error.checkErrorStatus(
+        "Sale nie zostały dodane, spróbuj ponownie"
+      );
     }
 
     if (wrongClassrooms.length > 0) {
@@ -362,6 +401,89 @@ class SchoolInfoStore {
     }
   }
 
+  @action
+  async addSubject(data) {
+    if (
+      this.subjects.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus("Przedmiot o tej nazwie już istnieje");
+    }
+
+    const newData = {
+      school_plan_config_id: this.schoolPlanId,
+      name: data.name,
+    };
+
+    const response = await DataService.postData(newData, "lessonType");
+    if (response?.error) {
+      return response;
+    }
+
+    this.subjects.data = [...this.subjects.data, response];
+  }
+
+  @action
+  async editSubject(data) {
+    if (
+      this.subjects.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus("Przedmiot o tej nazwie już istnieje");
+    }
+
+    const response = await DataService.editData(data, "lessonType", data._id);
+    if (response?.error) {
+      return response;
+    }
+
+    const index = this.subjects.data.findIndex((item) => item._id === data._id);
+    this.subjects.data[index] = data;
+  }
+
+  @action
+  async deleteSubject(id) {
+    const response = await DataService.deleteData("lessonType", id);
+
+    if (response.error) {
+      return response;
+    }
+
+    const newSubjects = this.subjects.data.filter((item) => item._id !== id);
+    this.subjects.data = newSubjects;
+  }
+
+  @action
+  async addManySubjects(subjects) {
+    let wrongSubjects = [];
+
+    for (const c of subjects) {
+      const response = await this.addSubject({ name: c });
+
+      if (response?.error) {
+        wrongSubjects.push(c);
+      }
+    }
+
+    if (wrongSubjects.length === subjects.length) {
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus(
+        "Przedmioty nie zostały dodane, spróbuj ponownie"
+      );
+    }
+
+    if (wrongSubjects.length > 0) {
+      return {
+        warning: `Przedmioty/a (${wrongSubjects.join(
+          ", "
+        )}) już istnieją. Reszta przedmiotów została dodana pomyślnie`,
+      };
+    }
+  }
 
   @computed
   get formattedStudentCount() {

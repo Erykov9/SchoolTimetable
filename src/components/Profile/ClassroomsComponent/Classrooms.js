@@ -28,7 +28,7 @@ const Classrooms = observer(() => {
 
   return (
     <div style={{ width: "90%" }}>
-      <h2>Klasy</h2>
+      <h2>Sale lekcyjne</h2>
       {classRooms.loading ? (
         <LoadingBar />
       ) : classRooms.error ? (
@@ -54,13 +54,13 @@ const Classrooms = observer(() => {
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
-                <TableCell>Nr/Nazwa sali</TableCell>
-                <TableCell></TableCell>
+                <TableCell>Sala</TableCell>
+                <TableCell align="right">Akcja</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {classRooms?.data?.map((row, index) => (
-                <SingleClassroom classroom={row} index={index}/>
+                <SingleClassroom key={`classroom-${row?.name}`} classroom={row} index={index}/>
               ))}
               <AddClassroom classroomLength={classRooms?.data?.length} />
             </TableBody>

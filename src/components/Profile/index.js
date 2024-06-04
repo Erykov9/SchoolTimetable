@@ -12,7 +12,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React, { useState} from "react";
+import React, { useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import styles from "./style.module.scss";
 
@@ -30,6 +30,7 @@ import Labels from "./LabelsComponent/Labels";
 
 import SchoolInfoStore from "../../mobx/SchoolInfoStore";
 import { observer } from "mobx-react";
+import Lessons from "./LessonsComponent/Lessons";
 
 const drawerWidth = 240;
 
@@ -70,7 +71,9 @@ const Profile = observer(() => {
             onClick={() => navigate(`${item.href}`)}
           >
             <ListItemButton>
-              <ListItemIcon>{item.icon(schoolPlanConfig?.loading)}</ListItemIcon>
+              <ListItemIcon>
+                {item.icon(schoolPlanConfig?.loading)}
+              </ListItemIcon>
               <ListItemText primary={item.value} />
             </ListItemButton>
           </ListItem>
@@ -85,7 +88,9 @@ const Profile = observer(() => {
             onClick={() => navigate(`${item.href}`)}
           >
             <ListItemButton>
-              <ListItemIcon>{item.icon(schoolPlanConfig?.loading)}</ListItemIcon>
+              <ListItemIcon>
+                {item.icon(schoolPlanConfig?.loading)}
+              </ListItemIcon>
               <ListItemText primary={item.value} />
             </ListItemButton>
           </ListItem>
@@ -100,10 +105,14 @@ const Profile = observer(() => {
             onClick={() => navigate(`${item.href}`)}
           >
             <ListItemButton>
-              <ListItemIcon>{item.value === "Wyloguj" ? item.icon : item.icon(schoolPlanConfig?.loading)}</ListItemIcon>
+              <ListItemIcon>
+                {item.value === "Wyloguj"
+                  ? item.icon
+                  : item.icon(schoolPlanConfig?.loading)}
+              </ListItemIcon>
               <ListItemText
                 primary={item.value}
-                sx={item.value === "Wyloguj" && { color: "#ed6c02" }}
+                sx={item.value === "Wyloguj" ? { color: "#ed6c02" } : {}}
               />
             </ListItemButton>
           </ListItem>
@@ -191,7 +200,8 @@ const Profile = observer(() => {
             <Route path="/subjects" element={<Subjects />} />
             <Route path="/teachers" element={<Teachers />} />
             <Route path="/classrooms" element={<Classrooms />} />
-            <Route path="/labels" element={<Labels/>} />
+            <Route path="/labels" element={<Labels />} />
+            <Route path="/lessons" element={<Lessons />} />
           </Routes>
         </div>
       </Box>

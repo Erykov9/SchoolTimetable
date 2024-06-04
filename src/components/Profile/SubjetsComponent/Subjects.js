@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import styles from "../style.module.scss";
-import { observer } from 'mobx-react';
-import SchoolInfoStore from '../../../mobx/SchoolInfoStore';
-import LoadingBar from '../../LoadingBar/LoadingBar';
+import { observer } from "mobx-react";
+import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
+import LoadingBar from "../../LoadingBar/LoadingBar";
 import {
   Table,
   TableBody,
@@ -13,15 +13,22 @@ import {
   Paper,
   Button,
   Stack,
+  Divider,
 } from "@mui/material";
-import { toJS } from 'mobx';
+import { useState } from "react";
+import SingleSubject from "./SingleSubject";
+import AddSubject from "./Forms/AddSubject";
+import ImportExportIcon from "@mui/icons-material/ImportExport";
+import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import AddManySubjects from "./Forms/AddManySubjects";
+import Popup from "../../Popup/Popup";
 
 const Subjects = observer(() => {
   const { subjects } = SchoolInfoStore;
-  console.log(toJS(subjects));
+  const [isManyOpen, setIsManyOpen] = useState(false);
 
   return (
-    <div className={styles.subjects} style={{width: '90%'}}>
+    <div className={styles.subjects} style={{ width: "90%" }}>
       <h2>Przedmioty</h2>
       {subjects.loading ? (
         <LoadingBar />
@@ -31,49 +38,44 @@ const Subjects = observer(() => {
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 300 }} aria-label="caption table">
             <caption>
-              <Button>Dodaj przedmiot</Button>
-              <Button color="secondary">Zaimportuj</Button>
+            <Stack gap={1} flexDirection={"row"}>
+                <Button color="secondary" startIcon={<ImportExportIcon />}>
+                  Zaimportuj
+                </Button>
+                <Divider orientation="vertical" flexItem />
+                <Button
+                  color="warning"
+                  startIcon={<LibraryAddIcon />}
+                  onClick={() => setIsManyOpen(true)}
+                >
+                  Dodaj wiele
+                </Button>
+              </Stack>
             </caption>
             <TableHead>
               <TableRow>
                 <TableCell>#</TableCell>
                 <TableCell>Przedmiot</TableCell>
-                <TableCell>Etykieta</TableCell>
-                <TableCell></TableCell>
+                <TableCell align="right">Akcja</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {subjects?.data?.map((row, index) => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell component="th" scope="row">{row?.label ? row.label : "Brak etykiety"}</TableCell>
-                  <TableCell align="right">
-                    <Stack
-                      gap={1}
-                      flexDirection={"row"}
-                      justifyContent={"flex-end"}
-                    >
-                      <Button variant="contained" color="success">
-                        Dodaj etykietę
-                      </Button>
-                      <Button variant="contained" color="secondary">
-                        Edytuj
-                      </Button>
-                      <Button variant="contained" color="error">
-                        Usuń
-                      </Button>
-                    </Stack>
-                  </TableCell>
-                </TableRow>
+                <SingleSubject key={`subject-${row.name}`} subject={row} index={index} />
               ))}
+              <AddSubject subjectLength={subjects?.data?.length || 0} />
             </TableBody>
           </Table>
         </TableContainer>
+      )}
+      {isManyOpen && (
+        <Popup
+          title={"Dodaj wiele przedmiotów"}
+          handleClose={() => setIsManyOpen(false)}
+          isOpen={isManyOpen}
+        >
+          <AddManySubjects />
+        </Popup>
       )}
     </div>
   );

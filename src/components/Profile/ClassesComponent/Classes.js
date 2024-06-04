@@ -54,6 +54,7 @@ const Classes = observer(() => {
               <TableRow>
                 <TableCell >Lp.</TableCell>
                 <TableCell >Klasa</TableCell>
+                <TableCell>Grupy</TableCell>
                 <TableCell align="right" width={250}>Akcja</TableCell>
               </TableRow>
             </TableHead>

@@ -7,6 +7,7 @@ import {
   Divider,
   TextField,
   Typography,
+
 } from "@mui/material";
 import { useState } from "react";
 
@@ -71,6 +72,11 @@ const SingleClass = ({ schoolClass, handleDelete, index }) => {
         ) : (
           <p>{schoolClass.name}</p>
         )}
+      </TableCell>
+      <TableCell>
+        
+        {/* GRUPA TO DO DISPLAY GRUP ORAZ FUNKCJA DODAWANIA */}
+        
       </TableCell>
       <TableCell align="right" sx={{ padding: "5px 15px" }}>
         <Stack gap={1} flexDirection={"row"} justifyContent={"flex-end"}>

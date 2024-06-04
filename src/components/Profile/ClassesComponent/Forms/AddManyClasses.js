@@ -1,62 +1,89 @@
-import React, { useState } from 'react';
-import { TextField, Box, Button, Stack } from '@mui/material';
-import CustomAlert from '../../../Alert/CustomAlert';
-import SchoolInfoStore from '../../../../mobx/SchoolInfoStore';
-import { observer } from 'mobx-react';
+import React, { useState } from "react";
+import { TextField, Box, Button, Stack, Chip } from "@mui/material";
+import CustomAlert from "../../../Alert/CustomAlert";
+import SchoolInfoStore from "../../../../mobx/SchoolInfoStore";
+import { observer } from "mobx-react";
 
 const AddManyClasses = observer(() => {
   const [classes, setClasses] = useState("");
   const [error, setError] = useState(false);
   const [warning, setWarning] = useState(false);
+  const [classesArray, setClassesArray] = useState([]);
+
+  const handleEnter = (e) => {
+    setWarning(false);
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      if (classesArray.includes(e.target.value)) {
+        setWarning(`Klasa "${e.target.value}" już istnieje`);
+        return;
+      }
+
+      setClassesArray([...classesArray, e.target.value]);
+      setClasses("");
+    }
+  };
+
+  const handleChipDelete = (chipLabel) => {
+    const newLabelsArray = classesArray.filter((label) => label !== chipLabel);
+    setClassesArray(newLabelsArray);
+  };
 
   const onSubmit = () => {
     setError(false);
     setWarning(false);
-    const forbiddenSeparators = /[;'.&-+~`!@#$%^&*()-]/g;
 
-    if (classes.match(forbiddenSeparators)) {
-      setError("Niepoprawny separator. Wpisz klasy oddzielone przecinkiem");
-      return;
-    }
-
-    if(classes.length === 0) {
+    if (classesArray.length === 0) {
       setError("Niepoprawne dane. Wpisz klasy oddzielone przecinkiem");
       return;
     }
 
-    const classesToAdd = classes.split(',').map((c) => c.trim());
-    const response = SchoolInfoStore.addManyClasses(classesToAdd);
+    const response = SchoolInfoStore.addManyClasses(classesArray);
 
-    if(response?.error) {
-      setError(response.error);
+    if (response?.error) {
+      setError(response.errorMessage);
       setClasses("");
       return;
     }
 
-    if(response?.warning) {
+    if (response?.warning) {
       setWarning(response.warning);
       setClasses("");
+      setClassesArray([]);
       return;
     }
   };
 
   return (
-    <Box component="form" >
+    <Box component="form">
       <Stack gap={2} mb={2}>
-        <p style={{fontSize: '12px', opacity: '.6'}}>Aby poprawnie dodać wiele klas, wpisz je oddzielone przecinkiem (np. 1A, 1B, 1C)</p>
+        <p style={{ fontSize: "12px", opacity: ".6" }}>
+          Aby poprawnie dodać wiele klas, wypisz ich nazwy po Enterze
+        </p>
         {error && <CustomAlert status="error" message={error} />}
         {warning && <CustomAlert status="warning" message={warning} />}
         <TextField
           id="class-name"
-          label="Wpisz klasy oddzielone przecinkiem (np. 1A, 1B, 1C)"
+          label="Wpisz klasy oddzielone enterem"
           variant="outlined"
           value={classes}
-          multiline
-          rows={10}
           onChange={(e) => setClasses(e.target.value)}
+          onKeyDown={handleEnter}
         />
+        <Stack direction={"row"} gap={1} flexWrap={"wrap"}>
+          {classesArray?.map((singleClass) => (
+            <Chip
+              key={singleClass}
+              label={singleClass}
+              onDelete={() => handleChipDelete(singleClass)}
+            />
+          ))}
         </Stack>
-        <Button variant="contained" color="primary" onClick={onSubmit}>Dodaj wiele</Button>
+      </Stack>
+      <Button variant="contained" color="primary" onClick={onSubmit}>
+        Dodaj wiele
+      </Button>
     </Box>
   );
 });

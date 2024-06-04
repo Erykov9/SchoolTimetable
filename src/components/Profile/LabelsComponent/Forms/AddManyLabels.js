@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Stack, TextField } from "@mui/material";
+import { Box, Button, Stack, TextField, Chip } from "@mui/material";
 import CustomAlert from "../../../Alert/CustomAlert";
 import SchoolInfoStore from "../../../../mobx/SchoolInfoStore";
 import { observer } from "mobx-react";
@@ -9,27 +9,42 @@ const AddManyLabels = observer(() => {
   const [labels, setLabels] = useState("");
   const [error, setError] = useState(false);
   const [warning, setWarning] = useState(false);
+  const [labelsArray, setLabelsArray] = useState([]);
+
+  const handleEnter = (e) => {
+    setWarning(false);
+    if (e.key === "Enter") {
+      e.preventDefault();
+
+      if (labelsArray.includes(e.target.value)) {
+        setWarning(`Etykieta "${e.target.value}" już istnieje`);
+        return;
+      }
+
+      setLabelsArray([...labelsArray, e.target.value]);
+      setLabels("");
+    }
+  };
+
+  const handleChipDelete = (chipLabel) => {
+    const newLabelsArray = labelsArray.filter((label) => label !== chipLabel);
+    setLabelsArray(newLabelsArray);
+  };
 
   const onSubmit = async () => {
     setError(false);
     setWarning(false);
-    const forbiddenSeparators = /[;'.&-+~`!@#$%^&*()-]/g;
 
-    if (labels.match(forbiddenSeparators)) {
-      setError("Niepoprawny separator. Wpisz etykiety oddzielone przecinkiem");
+    if (labelsArray.length === 0) {
+      setError("Niepoprawne dane.");
       return;
     }
 
-    if (labels.length === 0) {
-      setError("Niepoprawne dane. Wpisz etykiety oddzielone przecinkiem");
-      return;
-    }
-
-    const labelsToAdd = labels.split(",").map((c) => c.trim());
-    const response = await SchoolInfoStore.addManyLabels(labelsToAdd);
+    const response = await SchoolInfoStore.addManyLabels(labelsArray);
 
     if (response?.error) {
-      setError(response.error);
+      console.log(response);
+      setError(response.errorMessage);
       setLabels("");
       return;
     }
@@ -37,28 +52,40 @@ const AddManyLabels = observer(() => {
     if (response?.warning) {
       setWarning(response.warning);
       setLabels("");
+      setLabelsArray([]);
       return;
     }
+
+    setLabelsArray([]);
   };
 
   return (
     <Box component="form">
       <Stack gap={2} mb={2}>
         <p style={{ fontSize: "12px", opacity: ".6" }}>
-          Aby poprawnie dodać wiele klas, wpisz je oddzielone przecinkiem (np.
-          Łatwy, Trudny, Średni itp.)
+          Aby dodać etykiety, wypisz ich nazwy po Enterze
         </p>
+
         {error && <CustomAlert status="error" message={error} />}
         {warning && <CustomAlert status="warning" message={warning} />}
+        
         <TextField
-          id="class-name"
-          label="Wpisz etykiety oddzielone przecinkiem (np. Łatwy, Trudny, Średni itp.)"
+          id="label-name"
+          label="Wpisz etykiety po enterze"
           variant="outlined"
           value={labels}
-          multiline
-          rows={10}
           onChange={(e) => setLabels(e.target.value)}
+          onKeyDown={handleEnter}
         />
+        <Stack direction={"row"} gap={1} flexWrap={"wrap"}>
+          {labelsArray?.map((label) => (
+            <Chip
+              label={label}
+              key={label}
+              onDelete={() => handleChipDelete(label)}
+            />
+          ))}
+        </Stack>
       </Stack>
       <Button variant="contained" color="primary" onClick={onSubmit}>
         Dodaj wiele

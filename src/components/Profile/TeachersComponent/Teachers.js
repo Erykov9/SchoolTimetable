@@ -60,7 +60,7 @@ const Teachers = observer(() => {
             </TableHead>
             <TableBody>
               {teachers?.data?.map((row, index) => (
-                <SingleTeacher teacher={row} index={index} />
+                <SingleTeacher key={`teacher-${row.name}`} teacher={row} index={index} />
               ))}
               <AddTeacher teacherLength={teachers.data.length} />
             </TableBody>

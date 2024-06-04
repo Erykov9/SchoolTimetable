@@ -18,21 +18,24 @@ import HelpIcon from "@mui/icons-material/Help";
 
 import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
 
-const SingleLabel = ({ label, index }) => {
+const SingleSubject = ({ subject, index }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [labelData, setLabelData] = useState({
-    name: label?.name,
+  const [subjectData, setSubjectData] = useState({
+    name: subject?.name,
   });
   const [error, setError] = useState(false);
 
   const onSubmit = async () => {
     setError(false);
-    if (labelData.name.length === 0 || labelData.name.trim().length === 0) {
-      setError("Nazwa etykiety nie może być pusta");
+    if (subjectData.name.length === 0 || subjectData.name.trim().length === 0) {
+      setError("Nazwa przedmiotu nie może być pusta");
       return;
     }
 
-    const response = await SchoolInfoStore.editLabel({ ...label, name: labelData.name });
+    const response = await SchoolInfoStore.editSubject({
+      ...subject,
+      name: subjectData.name,
+    });
     if (response?.error) {
       return setError(response.error);
     }
@@ -47,16 +50,15 @@ const SingleLabel = ({ label, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteLabel(id);
-    
-    if(response?.error) {
-      return setError(`${response.errorMessage}. Błąd: ${response.status}` );
+    const response = await SchoolInfoStore.deleteSubject(id);
+
+    if (response?.error) {
+      return setError(`${response.errorMessage}. Błąd: ${response.status}`);
     }
-    setIsEdit(false);
   };
 
   return (
-    <TableRow key={label.name} height={isEdit ? 90 : 60}>
+    <TableRow key={subject.name} height={isEdit ? 90 : 60}>
       <TableCell component="th" scope="row" sx={{ padding: "5px 15px" }}>
         {index + 1}.
       </TableCell>
@@ -70,16 +72,16 @@ const SingleLabel = ({ label, index }) => {
           >
             <HelpIcon sx={{ color: "grey" }} />
             <TextField
-              value={labelData?.name}
-              id={label.name}
-              label="Edytuj etykietę"
-              onChange={(e) => setLabelData({ name: e.target.value })}
+              value={subjectData?.name}
+              id={subject.name}
+              subject="Edytuj etykietę"
+              onChange={(e) => setSubjectData({ name: e.target.value })}
               error={error}
             ></TextField>
             {error && <Typography color="error">{error}</Typography>}
           </Stack>
         ) : (
-          <p>{labelData.name}</p>
+          <p>{subjectData.name}</p>
         )}
       </TableCell>
       <TableCell align="right" sx={{ padding: "5px 15px" }}>
@@ -99,7 +101,7 @@ const SingleLabel = ({ label, index }) => {
 
               <Divider orientation="vertical" flexItem />
 
-              <Button color="error" onClick={() => handleDelete(label._id)}>
+              <Button color="error" onClick={() => handleDelete(subject._id)}>
                 <DeleteIcon />
               </Button>
             </>
@@ -110,4 +112,4 @@ const SingleLabel = ({ label, index }) => {
   );
 };
 
-export default SingleLabel;
+export default SingleSubject;
