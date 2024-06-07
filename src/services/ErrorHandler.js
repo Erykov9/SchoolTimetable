@@ -2,10 +2,12 @@ export default class ErrorHandler {
   status;
   error;
   errorMessage;
+  code;
 
-  constructor(error = null, status = null) {
+  constructor(error = null, status = null, code = null) {
     this.error = error;
     this.status = status;
+    this.code = code;
   }
 
   checkErrorStatus(errorMessage = null) {
@@ -50,10 +52,30 @@ export default class ErrorHandler {
       };
     }
 
+    if (this.status === 422) {
+      this.errorMessage = 'Wystąpił błąd serwera. Nieprawidłowy format danych';
+      return {
+        error: this.error,
+        errorMessage: errorMessage || this.errorMessage,
+        status: this.status,
+      };
+    }
+
+    if (this.code === "ERR_NETWORK") {
+      this.errorMessage = 'Problem z połączeniem';
+      return {
+        error: this.error,
+        errorMessage: errorMessage || this.errorMessage,
+        status: this.status,
+        code: this.code,
+      };
+    }
+
     return {
       error: this.error,
       errorMessage: this.errorMessage,
       status: this.status,
+      code: this.code
     };
   }
 }

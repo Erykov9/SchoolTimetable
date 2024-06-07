@@ -4,16 +4,20 @@ import { bsonToJs } from './bsonToJs.js';
 
 class DataService {
   URL = process.env.REACT_APP_API_URL;
+  AT = localStorage.getItem('AT');
+
   axiosConfig = {
     headers: {
       'Content-Type': 'application/json',
+      'Authorization': this.AT ? `Bearer ${this.AT}` : null,
     },
-    withCredentials: true,
+    // withCredentials: true,
   };
 
   async getSchoolPlanConfig() {
     try {
-      const response = await axios.get(`${this.URL}/schoolPlanConfig/664a19c615671d1f778fe8f8`);
+      console.log(this.AT);
+      const response = await axios.get(`${this.URL}/schoolPlanConfig/664a19c615671d1f778fe8f8`, this.axiosConfig);
       return response.data;
     } catch (error) {
       const errorHandler = new ErrorHandler(error.message, error.response.status);
@@ -44,12 +48,21 @@ class DataService {
 
   async deleteData(endpoint, id) {
     try {
-      console.log(id, endpoint)
       const parsedId = bsonToJs(id);
       const response = await axios.delete(`${this.URL}/${endpoint}/${parsedId}`, this.axiosConfig);
       return response.data;
     } catch (error) {
       const errorHandler = new ErrorHandler(error.message, error.response.status);
+      return errorHandler.checkErrorStatus();
+    }
+  }
+
+  async login(endpoint, data) {
+    try {
+      const response = await axios.post(`${this.URL}/${endpoint}`, data, this.axiosConfig);
+      return response.data;
+    } catch (error) {
+      const errorHandler = new ErrorHandler(error.message, error.response.status, error.code);
       return errorHandler.checkErrorStatus();
     }
   }

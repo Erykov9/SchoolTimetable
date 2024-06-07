@@ -34,6 +34,7 @@ const AddManyClassrooms = observer(() => {
   const onSubmit = async () => {
     setError(false);
     setWarning(false);
+    
     if (classroomsArray.length === 0) {
       setError("Niepoprawne dane.");
       return;

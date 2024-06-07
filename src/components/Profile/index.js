@@ -12,7 +12,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import styles from "./style.module.scss";
 
@@ -54,6 +54,14 @@ const Profile = observer(() => {
       setMobileOpen(!mobileOpen);
     }
   };
+
+  useEffect(() => {
+    const getSchoolPlanConfig = async () => {
+      await SchoolInfoStore.getSchoolPlanConfig();
+    };
+
+    getSchoolPlanConfig();
+  }, []);
 
   const drawer = (
     <div>

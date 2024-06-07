@@ -44,7 +44,6 @@ class SchoolInfoStore {
 
   constructor() {
     makeAutoObservable(this);
-    this.getSchoolPlanConfig();
   }
 
   @action
@@ -78,11 +77,11 @@ class SchoolInfoStore {
   }
 
   // CLASSES
-  addManyClasses(classes) {
+  async addManyClasses(classes) {
     let wrongClasses = [];
 
     for (const c of classes) {
-      const response = this.addClass({ name: c });
+      const response = await this.addClass({ name: c });
 
       if (response?.error) {
         wrongClasses.push(c);
@@ -90,14 +89,17 @@ class SchoolInfoStore {
     }
 
     if (wrongClasses.length === classes.length) {
-      return { error: "Klasy nie zostały dodane, spróbuj ponownie" };
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus(
+        "Klasy nie zostały dodane, spróbuj ponownie"
+      );
     }
 
     if (wrongClasses.length > 0) {
       return {
         warning: `Klasy/a (${wrongClasses.join(
           ", "
-        )}) już istnieją. Reszta klas została dodana pomyślnie`,
+        )}) już istnieje/ą. Reszta klas została dodana pomyślnie`,
       };
     }
   }
@@ -110,16 +112,15 @@ class SchoolInfoStore {
         (item) => item.name.toLowerCase() === data.name.toLowerCase()
       )
     ) {
-      const error = new ErrorHandler("", 400);
-      return error.checkErrorStatus();
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus("Klasa o tej nazwie już istnieje");
     }
     const newData = {
       school_plan_config_id: this.schoolPlanId,
       name: data.name,
     };
 
-    const response = await DataService.postData(newData, 'studentClass');
-    console.log(response)
+    const response = await DataService.postData(newData, "studentClass");
     if (response?.error) {
       return response;
     }
@@ -127,17 +128,34 @@ class SchoolInfoStore {
   }
 
   @action
-  editClass(data) {
-    if (this.classes.data.some((item) => item.name === data.name)) {
-      return { error: "Klasa o tej nazwie już istnieje" };
+  async editClass(data) {
+    if (
+      this.classes.data.some(
+        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+      )
+    ) {
+      const error = new ErrorHandler("Error", 400);
+      return error.checkErrorStatus("Klasa o tej nazwie już istnieje");
     }
-    const index = this.classes.data.findIndex((item) => item.id === data.id);
+
+    const response = await DataService.editData(data, "studentClass", data._id);
+    if (response?.error) {
+      return response;
+    }
+
+    const index = this.classes.data.findIndex((item) => item._id === data._id);
     this.classes.data[index] = data;
   }
 
   @action
-  deleteClass(id) {
-    const newClasses = this.classes.data.filter((item) => item.id !== id);
+  async deleteClass(id) {
+    const response = await DataService.deleteData("studentClass", id);
+
+    if (response.error) {
+      return response;
+    }
+    
+    const newClasses = this.classes.data.filter((item) => item._id !== id);
     this.classes.data = newClasses;
   }
 
@@ -164,9 +182,9 @@ class SchoolInfoStore {
 
     if (wrongLabels.length > 0) {
       return {
-        warning: `Klasy/a (${wrongLabels.join(
+        warning: `Etykiety/a (${wrongLabels.join(
           ", "
-        )}) już istnieją. Reszta klas została dodana pomyślnie`,
+        )}) już istnieje/ą. Reszta klas została dodana pomyślnie`,
       };
     }
   }
@@ -216,7 +234,6 @@ class SchoolInfoStore {
 
   @action
   async deleteLabel(id) {
-    console.log("ID: ", toJS(id))
     const response = await DataService.deleteData("lessonLabel", id);
 
     if (response.error) {

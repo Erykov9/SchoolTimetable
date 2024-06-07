@@ -1,0 +1,42 @@
+@import 'src/styles/settings.scss';
+
+.auth {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .logo {
+    height: 75px;
+  }
+
+  .form {
+    display: flex;
+    height: calc(100vh - 200px);
+    justify-content: center;
+    align-items: center;
+
+    .formWrapper {
+      border: 1px solid rgb(238, 238, 238);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 35px 65px;
+      border-radius: 10px;
+
+      h2 {
+        text-align: center;
+        font-weight: 300;
+      }
+
+      p {
+        text-align: center;
+      }
+
+      a {
+        color: $conflowerBlue;
+
+        &:hover {
+          color: $uranianBlue;
+        }
+      }
+    }
+  }
+}

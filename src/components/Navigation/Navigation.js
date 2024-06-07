@@ -19,7 +19,7 @@ const Navigation = () => {
           </div>
           <div className={styles.profile}>
             {!isLogged ? (
-                <Button startIcon={<LoginIcon/>} variant="contained" color="primary" onClick={() => navigate('/profile')}>Logowanie</Button>
+                <Button startIcon={<LoginIcon/>} variant="contained" color="primary" onClick={() => navigate('/login')}>Logowanie</Button>
             ) : (
               <div className={styles.loggedIn}>
                 <p>ZALOGOWANY JAKO:</p>

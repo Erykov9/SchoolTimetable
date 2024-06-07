@@ -7,7 +7,6 @@ import {
   Divider,
   TextField,
   Typography,
-
 } from "@mui/material";
 import { useState } from "react";
 
@@ -19,21 +18,23 @@ import HelpIcon from "@mui/icons-material/Help";
 
 import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
 
-const SingleClass = ({ schoolClass, handleDelete, index }) => {
+const SingleClass = ({ schoolClass, index }) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [className, setClassName] = useState({ name: schoolClass?.name || "" });
+  const [className, setClassName] = useState({ name: schoolClass?.name });
   const [error, setError] = useState(false);
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setError(false);
     if (className.name.length === 0 || className.name.trim().length === 0) {
       setError("Nazwa klasy nie może być pusta");
-      return console.log("forbidden");
+      return;
     }
 
-    const response = SchoolInfoStore.editClass({ id: schoolClass.id, ...className });
+    const response = await SchoolInfoStore.editClass({
+      ...className,
+      id: schoolClass.name,
+    });
     if (response?.error) {
-      console.log(className);
       return setError(response.error);
     }
 
@@ -43,7 +44,15 @@ const SingleClass = ({ schoolClass, handleDelete, index }) => {
 
   const editHandler = () => {
     setIsEdit(!isEdit);
-    console.log(className)
+  };
+
+  const handleDelete = async (id) => {
+    setError(false);
+    const response = await SchoolInfoStore.deleteClass(id);
+
+    if (response?.error) {
+      return setError(`${response.errorMessage}. Błąd: ${response.status}`);
+    }
   };
 
   return (
@@ -74,9 +83,7 @@ const SingleClass = ({ schoolClass, handleDelete, index }) => {
         )}
       </TableCell>
       <TableCell>
-        
         {/* GRUPA TO DO DISPLAY GRUP ORAZ FUNKCJA DODAWANIA */}
-        
       </TableCell>
       <TableCell align="right" sx={{ padding: "5px 15px" }}>
         <Stack gap={1} flexDirection={"row"} justifyContent={"flex-end"}>
@@ -97,7 +104,7 @@ const SingleClass = ({ schoolClass, handleDelete, index }) => {
 
               <Button
                 color="error"
-                onClick={() => handleDelete(schoolClass.id)}
+                onClick={() => handleDelete(schoolClass._id)}
               >
                 <DeleteIcon />
               </Button>

@@ -30,16 +30,16 @@ const AddManyClasses = observer(() => {
     setClassesArray(newLabelsArray);
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     setError(false);
     setWarning(false);
 
     if (classesArray.length === 0) {
-      setError("Niepoprawne dane. Wpisz klasy oddzielone przecinkiem");
+      setError("Niepoprawne dane.");
       return;
     }
 
-    const response = SchoolInfoStore.addManyClasses(classesArray);
+    const response = await SchoolInfoStore.addManyClasses(classesArray);
 
     if (response?.error) {
       setError(response.errorMessage);
@@ -53,6 +53,8 @@ const AddManyClasses = observer(() => {
       setClassesArray([]);
       return;
     }
+
+    setClassesArray([]);
   };
 
   return (
