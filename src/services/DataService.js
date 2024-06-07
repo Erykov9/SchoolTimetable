@@ -8,7 +8,7 @@ class DataService {
     headers: {
       'Content-Type': 'application/json',
     },
-    // withCredentials: true,
+    withCredentials: true,
   };
 
   async getSchoolPlanConfig() {

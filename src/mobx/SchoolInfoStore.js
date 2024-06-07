@@ -119,6 +119,7 @@ class SchoolInfoStore {
     };
 
     const response = await DataService.postData(newData, 'studentClass');
+    console.log(response)
     if (response?.error) {
       return response;
     }
@@ -190,8 +191,6 @@ class SchoolInfoStore {
     if (response?.error) {
       return response;
     }
-
-    console.log("ADD LABEL:", response)
 
     this.labels.data = [...this.labels.data, response];
   }

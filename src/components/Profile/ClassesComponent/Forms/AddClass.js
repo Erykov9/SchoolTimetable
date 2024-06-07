@@ -29,7 +29,6 @@ const AddClass = observer(({ classesLength }) => {
     
     const response = await SchoolInfoStore.addClass({name: className});
     if(response?.error) {
-      console.log(className)
       return setError(response.errorMessage);
     }
 
