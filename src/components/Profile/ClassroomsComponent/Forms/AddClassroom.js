@@ -26,9 +26,9 @@ const AddClassroom = observer(({ classroomLength }) => {
       return console.log("forbidden");
     }
 
-    const response = await SchoolInfoStore.addClassroom({
+    const response = await SchoolInfoStore.addItem({
       name: classroomName,
-    });
+    }, "classRooms", 'klasa', 'classroom');
 
     if (response?.error) {
       return setError(response.errorMessage);

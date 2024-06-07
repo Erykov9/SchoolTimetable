@@ -32,10 +32,13 @@ const SingleSubject = ({ subject, index }) => {
       return;
     }
 
-    const response = await SchoolInfoStore.editSubject({
+    const response = await SchoolInfoStore.editItem({
       ...subject,
       name: subjectData.name,
-    });
+    },
+    "subjects",
+    "przedmiot",
+    "lessonType");
     if (response?.error) {
       return setError(response.error);
     }
@@ -50,7 +53,7 @@ const SingleSubject = ({ subject, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteSubject(id);
+    const response = await SchoolInfoStore.deleteItem(id, "subjects", "lessonType");
 
     if (response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}`);

@@ -32,7 +32,12 @@ const SingleLabel = ({ label, index }) => {
       return;
     }
 
-    const response = await SchoolInfoStore.editLabel({ ...label, name: labelData.name });
+    const response = await SchoolInfoStore.editItem(
+      { ...label, name: labelData.name },
+      "labels",
+      "etykieta",
+      "lessonLabel"
+    );
     if (response?.error) {
       return setError(response.error);
     }
@@ -47,10 +52,10 @@ const SingleLabel = ({ label, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteLabel(id);
-    
-    if(response?.error) {
-      return setError(`${response.errorMessage}. Błąd: ${response.status}` );
+    const response = await SchoolInfoStore.deleteItem(id, "labels", "lessonLabel");
+
+    if (response?.error) {
+      return setError(`${response.errorMessage}. Błąd: ${response.status}`);
     }
     setIsEdit(false);
   };

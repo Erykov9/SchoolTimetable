@@ -40,7 +40,7 @@ const AddManyClassrooms = observer(() => {
       return;
     }
 
-    const response = await SchoolInfoStore.addManyClassrooms(classroomsArray);
+    const response = await SchoolInfoStore.addManyItems(classroomsArray, "classRooms", "klasy", "classroom");
 
     if (response?.error) {
       setError(response.errorMessage);

@@ -27,7 +27,7 @@ const AddClass = observer(({ classesLength }) => {
       return console.log("forbidden");
     }
     
-    const response = await SchoolInfoStore.addClass({name: className});
+    const response = await SchoolInfoStore.addItem({name: className}, "classes", "klasa", "studentClass");
     if(response?.error) {
       return setError(response.errorMessage);
     }

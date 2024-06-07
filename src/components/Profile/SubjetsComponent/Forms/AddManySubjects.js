@@ -40,7 +40,7 @@ const AddManySubjects = observer(() => {
       return;
     }
 
-    const response = await SchoolInfoStore.addManySubjects(subjectsArray);
+    const response = await SchoolInfoStore.addManyItems(subjectsArray, 'subjects', 'przedmioty', 'lessonType');
 
     if (response?.error) {
       setError(response.errorMessage);

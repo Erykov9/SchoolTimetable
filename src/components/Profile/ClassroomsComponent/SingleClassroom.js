@@ -33,10 +33,15 @@ const SingleClassroom = ({ classroom, index }) => {
       return;
     }
 
-    const response = await SchoolInfoStore.editClassroom({
-      ...classroom,
-      name: classroomData.name,
-    });
+    const response = await SchoolInfoStore.editItem(
+      {
+        ...classroom,
+        name: classroomData.name,
+      },
+      "classRooms",
+      "klasa",
+      "classroom"
+    );
     if (response?.error) {
       return setError(response.error);
     }
@@ -51,7 +56,11 @@ const SingleClassroom = ({ classroom, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteClassroom(id);
+    const response = await SchoolInfoStore.deleteItem(
+      id,
+      "classRooms",
+      "classroom"
+    );
 
     if (response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}`);

@@ -10,6 +10,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import SettingsSuggestIcon from "@mui/icons-material/SettingsSuggest";
 import CreateIcon from "@mui/icons-material/Create";
 import LabelIcon from "@mui/icons-material/Label";
+import GroupIcon from '@mui/icons-material/Group';
 import { Skeleton } from "@mui/material";
 
 export const schoolPlannerDrawer = [
@@ -106,6 +107,18 @@ export const schoolPlannerDrawer = [
         <Skeleton variant="rectangular" width={260} height={35} />
       ) : (
         <LabelIcon />
+      );
+    },
+  },
+  {
+    id: 9,
+    value: "Grupy",
+    href: "groups",
+    icon: function (isLoading) {
+      return isLoading ? (
+        <Skeleton variant="rectangular" width={260} height={35} />
+      ) : (
+        <GroupIcon />
       );
     },
   },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Button,
@@ -16,8 +16,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import HelpIcon from "@mui/icons-material/Help";
 
-
-const AddTeacher = ({teacherLength}) => {
+const AddTeacher = ({ teacherLength }) => {
   const [teacherName, setTeacherName] = useState("");
   const [error, setError] = useState(false);
 
@@ -28,7 +27,12 @@ const AddTeacher = ({teacherLength}) => {
       return console.log("forbidden");
     }
 
-    const response = await SchoolInfoStore.addTeacher({ name: teacherName });
+    const response = await SchoolInfoStore.addItem(
+      { name: teacherName },
+      "teachers",
+      "nauczyciel",
+      "teacher"
+    );
     if (response?.error) {
       return setError(response.errorMessage);
     }

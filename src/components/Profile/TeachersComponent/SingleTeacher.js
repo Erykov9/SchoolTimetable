@@ -37,7 +37,7 @@ const SingleTeacher = ({teacher, index}) => {
       return;
     }
 
-    const response = SchoolInfoStore.editTeacher({ ...teacher, name: teacherData.name });
+    const response = SchoolInfoStore.editItem({ ...teacher, name: teacherData.name }, "teachers", "nauczyciel", "teacher");
     if (response?.error) {
       return setError(response.error);
     }
@@ -47,7 +47,7 @@ const SingleTeacher = ({teacher, index}) => {
   };
   const handleDelete = () => {
     setError(false);
-    const response = SchoolInfoStore.deleteTeacher(teacher._id);
+    const response = SchoolInfoStore.deleteItem(teacher._id, "teachers", "teacher");
     
     if(response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}` );

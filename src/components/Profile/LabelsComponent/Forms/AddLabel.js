@@ -25,7 +25,12 @@ const AddLabel = ({ lessonLabelLength }) => {
       return console.log("forbidden");
     }
 
-    const response = await SchoolInfoStore.addLabel({ name: lessonLabelName });
+    const response = await SchoolInfoStore.addItem(
+      { name: lessonLabelName },
+      "labels",
+      "erykieta",
+      "lessonLabel"
+    );
     if (response?.error) {
       return setError(response.errorMessage);
     }

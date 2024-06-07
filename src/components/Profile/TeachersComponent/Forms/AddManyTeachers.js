@@ -36,11 +36,11 @@ const AddManyTeachers = observer(() => {
     setWarning(false);
 
     if (teachersArray.length === 0) {
-      setError("Niepoprawne dane. Wpisz nauczycieli oddzielone przecinkiem");
+      setError("Niepoprawne dane");
       return;
     }
 
-    const response = await SchoolInfoStore.addManyTeachers(teachersArray);
+    const response = await SchoolInfoStore.addManyItems(teachersArray, "teachers", "nauczyciele", "teacher");
 
     if (response?.error) {
       setError(response.errorMessage);

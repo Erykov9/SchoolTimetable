@@ -40,7 +40,12 @@ const AddManyLabels = observer(() => {
       return;
     }
 
-    const response = await SchoolInfoStore.addManyLabels(labelsArray);
+    const response = await SchoolInfoStore.addManyItems(
+      labelsArray,
+      "labels",
+      "etykiety",
+      "lessonLabel"
+    );
 
     if (response?.error) {
       console.log(response);
@@ -68,7 +73,7 @@ const AddManyLabels = observer(() => {
 
         {error && <CustomAlert status="error" message={error} />}
         {warning && <CustomAlert status="warning" message={warning} />}
-        
+
         <TextField
           id="label-name"
           label="Wpisz etykiety po enterze"

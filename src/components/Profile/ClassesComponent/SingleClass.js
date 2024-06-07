@@ -48,7 +48,7 @@ const SingleClass = ({ schoolClass, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteClass(id);
+    const response = await SchoolInfoStore.deleteItem(id, "classes", "studentClass");
 
     if (response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}`);

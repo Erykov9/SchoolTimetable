@@ -25,7 +25,7 @@ const AddSubject = ({ subjectLength }) => {
       return console.log("forbidden");
     }
 
-    const response = await SchoolInfoStore.addSubject({ name: subjectName });
+    const response = await SchoolInfoStore.addItem({ name: subjectName }, "subjects", 'przedmiot', 'lessonType');
     if (response?.error) {
       return setError(response.errorMessage);
     }
