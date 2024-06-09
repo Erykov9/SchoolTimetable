@@ -71,7 +71,7 @@ class SchoolInfoStore {
       this.labels.data = data[0].lessonLabels;
       this.subjects.data = data[0].lessonTypes;
       this.teachers.data = data[0].teachers;
-      this.groups.data = data[0].groups;
+      this.groups.data = data[0].classGroups;
       this.schoolPlanId = data[0]._id;
       return;
     }
@@ -96,7 +96,7 @@ class SchoolInfoStore {
 
     const newData = {
       school_plan_config_id: this.schoolPlanId,
-      name: data.name,
+      ...data,
     };
 
     const response = await DataService.postData(newData, endpoint);
@@ -111,7 +111,7 @@ class SchoolInfoStore {
   async editItem(data, type, polishType, endpoint) {
     if (
       this[type].data.some(
-        (item) => item.name.toLowerCase() === data.name.toLowerCase()
+        (item) => item.name.toLowerCase() === data.name.toLowerCase() && item._id !== data._id
       )
     ) {
       const error = new ErrorHandler("Error", 400);

@@ -12,34 +12,34 @@ import {
   Paper,
   Button,
   Stack,
-  Divider
+  Divider,
 } from "@mui/material";
 import { useState } from "react";
-import AddClassroom from "./Forms/AddClassroom";
+import SingleGroup from "./SingleGroup";
 import ImportExportIcon from "@mui/icons-material/ImportExport";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import Popup from "../../Popup/Popup";
-import AddManyClassrooms from "./Forms/AddManyClassrooms";
-import SingleClassroom from "./SingleClassroom";
+import AddGroup from "./Forms/AddGroup";
+import AddManyGroups from "./Forms/AddManyGroups";
 
-const Classrooms = observer(() => {
-  const { classRooms } = SchoolInfoStore;
+const Groups = observer(() => {
+  const { groups } = SchoolInfoStore;
   const [isManyOpen, setIsManyOpen] = useState(false);
 
   return (
-    <div style={{ width: "90%" }}>
-      <h2>Sale lekcyjne</h2>
-      {classRooms.loading ? (
+    <div style={{width: "90%"}}>
+      <h2>Grupy</h2>
+      {groups.loading ? (
         <LoadingBar />
-      ) : classRooms.error ? (
-        <p>{classRooms.error}</p>
+      ) : groups.error ? (
+        <p>{groups.error}</p>
       ) : (
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 300 }} aria-label="caption table">
+          <Table sx={{minWidth: 300}} aria-label="caption table">
             <caption>
-               <Stack gap={1} flexDirection={"row"}>
+              <Stack gap={1} flexDirection={"row"}>
                 <Button color="secondary" startIcon={<ImportExportIcon />}>
-                  Zaimportuj
+                  WKLEJ Z EXCELA
                 </Button>
                 <Divider orientation="vertical" flexItem />
                 <Button
@@ -53,30 +53,31 @@ const Classrooms = observer(() => {
             </caption>
             <TableHead>
               <TableRow>
-                <TableCell>#</TableCell>
-                <TableCell>Sala</TableCell>
+                <TableCell>Lp.</TableCell>
+                <TableCell>Grupa</TableCell>
+                <TableCell>Klasa</TableCell>
                 <TableCell align="right">Akcja</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {classRooms?.data?.map((row, index) => (
-                <SingleClassroom key={`classroom-${row?._id.$oid}`} classroom={row} index={index}/>
+              {groups.data.map((group, index) => (
+                <SingleGroup key={`group-${group._id.$oid}`} group={group} index={index} />
               ))}
-              <AddClassroom classroomLength={classRooms?.data?.length} />
+              <AddGroup groupLength={groups.data.length} />
             </TableBody>
           </Table>
         </TableContainer>
       )}
-      {isManyOpen && (
-        <Popup
-          title="Dodaj wiele klas"
-          isOpen={isManyOpen}
-          handleClose={() => setIsManyOpen(false)}
-          children={<AddManyClassrooms />}
-        />
-      )}
+      <Popup
+        isOpen={isManyOpen}
+        handleClose={() => setIsManyOpen(false)}
+        title={"Dodaj wiele grup"}
+      >
+        <AddManyGroups />
+      </Popup>
+
     </div>
   );
 });
 
-export default Classrooms;
+export default Groups;

@@ -21,6 +21,7 @@ import Classrooms from "./ClassroomsComponent/Classrooms";
 import Subjects from "./SubjetsComponent/Subjects";
 import Teachers from "./TeachersComponent/Teachers";
 import Timetables from "./TimetablesComponent/Timetables";
+import LoadingBar from "../LoadingBar/LoadingBar";
 import {
   advancedDrawer,
   restDrawer,
@@ -31,6 +32,7 @@ import Labels from "./LabelsComponent/Labels";
 import SchoolInfoStore from "../../mobx/SchoolInfoStore";
 import { observer } from "mobx-react";
 import Lessons from "./LessonsComponent/Lessons";
+import Groups from "./GroupsComponent/Groups";
 
 const drawerWidth = 240;
 
@@ -201,17 +203,22 @@ const Profile = observer(() => {
         }}
       >
         <Toolbar />
-        <div className={styles.wrapper}>
-          <Routes>
-            <Route path="/classes" element={<Classes />} />
-            <Route path="/timetables" element={<Timetables />} />
-            <Route path="/subjects" element={<Subjects />} />
-            <Route path="/teachers" element={<Teachers />} />
-            <Route path="/classrooms" element={<Classrooms />} />
-            <Route path="/labels" element={<Labels />} />
-            <Route path="/lessons" element={<Lessons />} />
-          </Routes>
-        </div>
+        {schoolPlanConfig.loading ? (
+          <LoadingBar />
+        ) : (
+          <div className={styles.wrapper}>
+            <Routes>
+              <Route path="/classes" element={<Classes />} />
+              <Route path="/timetables" element={<Timetables />} />
+              <Route path="/subjects" element={<Subjects />} />
+              <Route path="/teachers" element={<Teachers />} />
+              <Route path="/classrooms" element={<Classrooms />} />
+              <Route path="/labels" element={<Labels />} />
+              <Route path="/lessons" element={<Lessons />} />
+              <Route path="/groups" element={<Groups />} />
+            </Routes>
+          </div>
+        )}
       </Box>
     </Box>
   );

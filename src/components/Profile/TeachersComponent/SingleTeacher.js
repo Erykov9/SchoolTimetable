@@ -52,7 +52,6 @@ const SingleTeacher = ({teacher, index}) => {
     if(response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}` );
     }
-    console.log(toJS(teacher._id))
   };
 
   return (

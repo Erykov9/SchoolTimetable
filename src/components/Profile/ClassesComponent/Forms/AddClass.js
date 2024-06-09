@@ -7,7 +7,6 @@ import {
   Divider,
   TextField,
   Typography,
-  Table,
 } from "@mui/material";
 import { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
@@ -54,7 +53,7 @@ const AddClass = observer(({ classesLength }) => {
           {error && <Typography color="error">{error}</Typography>}
         </Stack>
       </TableCell>
-      <TableCell>GRUPA</TableCell>
+      <TableCell></TableCell>
       <TableCell align="right">
         <Stack gap={1} flexDirection={"row"} justifyContent={"flex-end"}>
           <Button onClick={() => setClassName("")} sx={{color: 'grey'}}><RefreshIcon/></Button>

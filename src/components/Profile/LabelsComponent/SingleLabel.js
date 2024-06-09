@@ -52,7 +52,11 @@ const SingleLabel = ({ label, index }) => {
 
   const handleDelete = async (id) => {
     setError(false);
-    const response = await SchoolInfoStore.deleteItem(id, "labels", "lessonLabel");
+    const response = await SchoolInfoStore.deleteItem(
+      id,
+      "labels",
+      "lessonLabel"
+    );
 
     if (response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}`);

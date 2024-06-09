@@ -65,6 +65,8 @@ const SingleClassroom = ({ classroom, index }) => {
     if (response?.error) {
       return setError(`${response.errorMessage}. Błąd: ${response.status}`);
     }
+
+    setIsEdit(false);
   };
 
   return (
@@ -84,7 +86,7 @@ const SingleClassroom = ({ classroom, index }) => {
             <TextField
               value={classroomData?.name}
               id={classroom.name}
-              label="Edytuj etykietę"
+              label="Edytuj salę"
               onChange={(e) => setClassroomData({ name: e.target.value })}
               error={error}
             ></TextField>
