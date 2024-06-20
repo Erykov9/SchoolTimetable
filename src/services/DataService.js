@@ -13,11 +13,10 @@ class DataService {
     },
     // withCredentials: true,
   };
-
-  async getSchoolPlanConfig() {
+ 
+  async getSchoolPlanConfig(id) {
     try {
-      console.log(this.AT);
-      const response = await axios.get(`${this.URL}/schoolPlanConfig/664a19c615671d1f778fe8f8`, this.axiosConfig);
+      const response = await axios.get(`${this.URL}/schoolPlanConfig/${id}`, this.axiosConfig);
       return response.data;
     } catch (error) {
       const errorHandler = new ErrorHandler(error.message, error.response.status);
@@ -28,6 +27,7 @@ class DataService {
   async postData(data, endpoint) {
     try {
       const response = await axios.post(`${this.URL}/${endpoint}`, data, this.axiosConfig);
+      console.log("Post Data: ", response.data, endpoint)
       return response.data;
     } catch (error) {
       const errorHandler = new ErrorHandler(error.message, error.response.status);
@@ -66,7 +66,16 @@ class DataService {
       return errorHandler.checkErrorStatus();
     }
   }
-  
+
+  async getData(endpoint) {
+    try {
+      const response = await axios.get(`${this.URL}/${endpoint}`, this.axiosConfig);
+      return response;
+    } catch (error) {
+      const errorHandler = new ErrorHandler(error.message, error.response.status);
+      return errorHandler.checkErrorStatus();
+    }
+  }
 };
 
 export default new DataService();

@@ -1,6 +1,7 @@
 import { action, computed, makeAutoObservable, toJS } from "mobx";
 import DataService from "../services/DataService";
 import ErrorHandler from "../services/ErrorHandler";
+import AuthStore from "./AuthStore";
 
 class SchoolInfoStore {
   schoolName = "Zespół Szkół Zawodowych nr 2 w Wypizdowie Wielkim";
@@ -48,6 +49,12 @@ class SchoolInfoStore {
     error: null,
   };
 
+  lessons = {
+    data: [],
+    loading: false,
+    error: null,
+  };
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -57,11 +64,16 @@ class SchoolInfoStore {
     this.schoolName = name;
   }
 
+  @action
+  setSchoolPlanId(id) {
+    this.schoolPlanId = id;
+  }
+
   // SCHOOL PLAN CONFIG
   @action
   async getSchoolPlanConfig() {
     this.schoolPlanConfig.loading = true;
-    const data = await DataService.getSchoolPlanConfig();
+    const data = await DataService.getSchoolPlanConfig(this.schoolPlanId);
     this.schoolPlanConfig.loading = false;
 
     if (!data.error) {
@@ -72,6 +84,7 @@ class SchoolInfoStore {
       this.subjects.data = data[0].lessonTypes;
       this.teachers.data = data[0].teachers;
       this.groups.data = data[0].classGroups;
+      this.lessons.data = data[0].lessons;
       this.schoolPlanId = data[0]._id;
       return;
     }
@@ -83,7 +96,7 @@ class SchoolInfoStore {
     };
   }
 
-  @action 
+  @action
   async addItem(data, type, polishType, endpoint) {
     if (
       this[type].data.some(
@@ -91,11 +104,14 @@ class SchoolInfoStore {
       )
     ) {
       const error = new ErrorHandler("Error", 400);
-      return error.checkErrorStatus(`${polishType.toUpperCase()} o tej nazwie już istnieje`);
+      return error.checkErrorStatus(
+        `${polishType.toUpperCase()} o tej nazwie już istnieje`
+      );
     }
 
     const newData = {
-      school_plan_config_id: this.schoolPlanId,
+      school_plan_config_id: { $oid: this.schoolPlanId },
+      user_id: AuthStore.user.id,
       ...data,
     };
 
@@ -105,17 +121,53 @@ class SchoolInfoStore {
     }
 
     this[type].data = [...this[type].data, response];
+    return response;
+  }
+
+  @action
+  async addGroupsToClass(data) {
+    for(const c of data) {
+      const newC = {
+        ...c,
+        school_plan_config_id: { $oid: this.schoolPlanId },
+      };
+
+      const response = await DataService.postData(newC, 'classGroup');
+      if(response?.error) {
+        return response;
+      }
+
+      this.groups.data = [...this.groups.data, response];
+    }
+    return { success: 'Grupy zostały dodane pomyślnie' };
+  }
+
+  @action 
+  async deleteGroups(groupsToDelete) {
+    for(const group of groupsToDelete) {
+      const response = await DataService.deleteData('classGroup', group._id);
+      if(response.error) {
+        return response;
+      }
+
+      const newGroups = this.groups.data.filter(g => g._id !== group._id);
+      this.groups.data = newGroups;
+    }
   }
 
   @action
   async editItem(data, type, polishType, endpoint) {
     if (
       this[type].data.some(
-        (item) => item.name.toLowerCase() === data.name.toLowerCase() && item._id !== data._id
+        (item) =>
+          item.name.toLowerCase() === data.name.toLowerCase() &&
+          item._id !== data._id
       )
     ) {
       const error = new ErrorHandler("Error", 400);
-      return error.checkErrorStatus(`${polishType.toUpperCase()} o tej nazwie już istnieje`);
+      return error.checkErrorStatus(
+        `${polishType.toUpperCase()} o tej nazwie już istnieje`
+      );
     }
 
     const response = await DataService.editData(data, endpoint, data._id);
@@ -144,7 +196,12 @@ class SchoolInfoStore {
     let wrongItems = [];
 
     for (const c of items) {
-      const response = await this.addItem({ name: c }, type, polishTypes, endpoint);
+      const response = await this.addItem(
+        { name: c },
+        type,
+        polishTypes,
+        endpoint
+      );
 
       if (response?.error) {
         wrongItems.push(c);

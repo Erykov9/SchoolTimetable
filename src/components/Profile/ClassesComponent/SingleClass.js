@@ -18,8 +18,9 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import HelpIcon from "@mui/icons-material/Help";
 
 import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
+import { observer } from "mobx-react";
 
-const SingleClass = ({ schoolClass, index }) => {
+const SingleClass = observer(({ schoolClass, index }) => {
   const { groups } = SchoolInfoStore;
 
   const [isEdit, setIsEdit] = useState(false);
@@ -129,6 +130,6 @@ const SingleClass = ({ schoolClass, index }) => {
       </TableCell>
     </TableRow>
   );
-};
+});
 
 export default SingleClass;

@@ -32,7 +32,7 @@ import Labels from "./LabelsComponent/Labels";
 import SchoolInfoStore from "../../mobx/SchoolInfoStore";
 import { observer } from "mobx-react";
 import Lessons from "./LessonsComponent/Lessons";
-import Groups from "./GroupsComponent/Groups";
+import AuthStore from "../../mobx/AuthStore";
 
 const drawerWidth = 240;
 
@@ -41,6 +41,7 @@ const Profile = observer(() => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const { schoolPlanConfig } = SchoolInfoStore;
+  const isLogged = AuthStore.isLogged();
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -59,6 +60,7 @@ const Profile = observer(() => {
 
   useEffect(() => {
     const getSchoolPlanConfig = async () => {
+      await isLogged;
       await SchoolInfoStore.getSchoolPlanConfig();
     };
 
@@ -215,7 +217,6 @@ const Profile = observer(() => {
               <Route path="/classrooms" element={<Classrooms />} />
               <Route path="/labels" element={<Labels />} />
               <Route path="/lessons" element={<Lessons />} />
-              <Route path="/groups" element={<Groups />} />
             </Routes>
           </div>
         )}

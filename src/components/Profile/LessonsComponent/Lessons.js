@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
-import { toJS } from "mobx";
+import { get, set, toJS } from "mobx";
 import {
   Accordion,
   AccordionSummary,
@@ -9,20 +9,13 @@ import {
   Button,
   Typography,
   Stack,
-  Box,
-  TextField,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-  Autocomplete
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import SingleClassLessons from "./SingleClassLessons/SingleClassLessons";
+import { observer } from "mobx-react";
 
-const Lessons = () => {
-  const { classes, subjects, teachers } = SchoolInfoStore;
-  const [size, setSize] = useState(1);
-  const [teacherState, setTeacherState] = useState("");
-  console.log(toJS(subjects));
+const Lessons = observer(() => {
+  const { classes, lessons } = SchoolInfoStore;
 
   return (
     <div
@@ -38,7 +31,7 @@ const Lessons = () => {
         Lekcje
       </Typography>
       <Stack gap={2} sx={{ width: "90%" }}>
-        {classes?.data?.map((schoolClass) => (
+        {classes.data.map((schoolClass) => (
           <Accordion key={schoolClass.id}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
@@ -48,67 +41,13 @@ const Lessons = () => {
               Klasa {schoolClass.name}
             </AccordionSummary>
             <AccordionDetails>
-              {/* DISPLAY SUBJECTS */}
-              <Stack gap={2} sx={{ width: "90%" }}>
-                {subjects?.data?.map((subject) => (
-                  <p>{subject.name}</p>
-                ))}
+              <Stack gap={2} sx={{ width: "100%" }}>
+                <SingleClassLessons
+                  singleClass={schoolClass}
+                  lessons={lessons}
+                />
               </Stack>
               <Button variant="contained">+</Button>
-              <Box component={"form"}>
-                <Stack gap={1}>
-                  <Autocomplete
-                    disablePortal
-                    id="teacher"
-                    label="Przedmiot"
-                    options={teachers?.data || []}
-                    getOptionLabel={(options) => options.name || ""} 
-                    value={size}
-                    renderInput={(params) => (
-                      <TextField {...params} label="Nauczyciel" />
-                    )}
-                    
-                  />
-                  <TextField
-                    id="teacher"
-                    label="Nauczyciel"
-                    type="number"
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                  />
-
-                  <TextField
-                    id="lesson_duration"
-                    label="Czas trwania lekcji"
-                    type="number"
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                  />
-                  <TextField
-                    id="teacher"
-                    label="Etykieta"
-                    type="number"
-                    value={size}
-                    onChange={(e) => setSize(e.target.value)}
-                  />
-                  <FormGroup>
-                    <FormControlLabel
-                      control={<Checkbox defaultChecked />}
-                      label="Label"
-                    />
-                    <FormControlLabel
-                      required
-                      control={<Checkbox />}
-                      label="Required"
-                    />
-                    <FormControlLabel
-                      disabled
-                      control={<Checkbox />}
-                      label="Disabled"
-                    />
-                  </FormGroup>
-                </Stack>
-              </Box>
             </AccordionDetails>
             <AccordionActions>
               <Button size="small">Edytuj</Button>
@@ -119,6 +58,6 @@ const Lessons = () => {
       </Stack>
     </div>
   );
-};
+});
 
 export default Lessons;

@@ -5,8 +5,10 @@ import { NavLink } from "react-router-dom";
 import { useState } from "react";
 import AuthStore from "../../mobx/AuthStore";
 import CustomAlert from "../Alert/CustomAlert";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [saveLoginData, setSaveLoginData] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +32,7 @@ const Login = () => {
       return;
     }
     
+    navigate("/profile");
   };
 
   return (
