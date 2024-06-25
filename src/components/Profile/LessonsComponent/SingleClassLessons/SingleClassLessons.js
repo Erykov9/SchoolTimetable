@@ -10,11 +10,15 @@ import {
   Paper,
   Chip,
   Stack,
+  Button,
 } from "@mui/material";
 import AddLesson from "./AddLesson";
+import ModalComponent from "../../../Modal/ModalComponent";
 
 const SingleClassLessons = ({ singleClass, lessons }) => {
   const [classLessons, setClassLessons] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
+  const handleClose = () => setIsOpen(false);
 
   const getClassLessons = (classId) => {
     const lessonsData = toJS(lessons.data);
@@ -25,13 +29,14 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
       .sort((a, b) => a.lessonType.name.localeCompare(b.lessonType.name));
 
     setClassLessons(classLessons);
+    return classLessons;
   };
 
   useEffect(() => {
     getClassLessons(singleClass._id.$oid);
-  }, []);
+  }, [singleClass]);
 
-  console.log(classLessons);
+
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -44,6 +49,7 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
             <TableCell>Nauczyciel</TableCell>
             <TableCell>Etykieta</TableCell>
             <TableCell>Grupy</TableCell>
+            <TableCell>Dozwolone sale</TableCell>
             <TableCell>Akcja</TableCell>
           </TableRow>
         </TableHead>
@@ -57,15 +63,32 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
             <TableCell>{row.teacher?.name}</TableCell>
             <TableCell>{row.lessonLabel?.name || "Brak"}</TableCell>
             <TableCell>
-              <Stack flexDirection={'row'} gap={1}>
+              <Stack flexDirection={"row"} gap={1}>
                 {row.groups?.map((group) => (
-                  <Chip label={group?.name} />
+                  <Chip label={group?.name} key={`group-${group._id.$oid}`} />
                 ))}
+              </Stack>
+            </TableCell>
+            <TableCell>
+              <Stack flexDirection={"row"} gap={1}>
+                {row.classrooms.length === 0
+                  ? "Nie dodano"
+                  : row.classrooms?.map((group) => (
+                      <Chip label={group?.name} key={`group-${group._id.$oid}`}/>
+                    ))}
               </Stack>
             </TableCell>
           </TableRow>
         ))}
-        <AddLesson index={classLessons.length} />
+        {isOpen && (
+          <ModalComponent isOpen={isOpen} handleClose={handleClose}>
+            <AddLesson singleClass={singleClass}/>
+          </ModalComponent>
+        )}
+        <Button variant="contained" onClick={() => setIsOpen(true)} style={{margin: '10px'}}>
+          Dodaj lekcję
+        </Button>
+
       </Table>
     </TableContainer>
   );

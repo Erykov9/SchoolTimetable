@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import SchoolInfoStore from "../../../mobx/SchoolInfoStore";
-import { get, set, toJS } from "mobx";
 import {
   Accordion,
   AccordionSummary,
@@ -32,7 +31,7 @@ const Lessons = observer(() => {
       </Typography>
       <Stack gap={2} sx={{ width: "90%" }}>
         {classes.data.map((schoolClass) => (
-          <Accordion key={schoolClass.id}>
+          <Accordion key={schoolClass._id.$oid}>
             <AccordionSummary
               expandIcon={<ExpandMoreIcon />}
               aria-controls="panel1-content"
@@ -47,7 +46,6 @@ const Lessons = observer(() => {
                   lessons={lessons}
                 />
               </Stack>
-              <Button variant="contained">+</Button>
             </AccordionDetails>
             <AccordionActions>
               <Button size="small">Edytuj</Button>
@@ -55,6 +53,7 @@ const Lessons = observer(() => {
             </AccordionActions>
           </Accordion>
         ))}
+        
       </Stack>
     </div>
   );

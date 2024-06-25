@@ -1,4 +1,5 @@
 import React from "react";
+import SchoolInfoStore from "../../../../mobx/SchoolInfoStore";
 import {
   Button,
   TextField,
@@ -10,154 +11,234 @@ import {
   Table,
   Select,
   MenuItem,
+  InputLabel,
+  FormControl,
+  OutlinedInput,
+  Checkbox,
+  ListItemText,
 } from "@mui/material";
 import { useState } from "react";
-import CustomAlert from "../../../Alert/CustomAlert";
-import AddIcon from "@mui/icons-material/Add";
-import RefreshIcon from "@mui/icons-material/Refresh";
-import HelpIcon from "@mui/icons-material/Help";
+import { observer } from "mobx-react";
+import { toJS } from "mobx";
+import styles from "./AddLesson.module.scss";
 
-const AddLesson = ({ index }) => {
-  const initialValues = {
-    lessonName: "",
-    lessonSize: 1,
-    lessonAmountPerWeek: 1,
-    lessonTeacher: "",
-    lessonLabel: "",
-    lessonGroups: [],
-  };
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
-  const initialErrors = {
-    lessonName: false,
-    lessonSize: false,
-    lessonAmountPerWeek: false,
-    lessonTeacher: false,
-    lessonLabel: false,
-    lessonGroups: false,
-  };
+const AddLesson = observer(({ singleClass }) => {
+  const { classRooms, subjects, teachers, labels } = SchoolInfoStore;
+  const [subject, setSubject] = useState(toJS(subjects.data[0]));
+  const [lessonLength, setLessonLength] = useState(1);
+  const [amountPerWeek, setAmountPerWeek] = useState(1);
+  const [teacher, setTeacher] = useState(toJS(teachers.data[0]));
+  const [label, setLabel] = useState(toJS(labels.data[0]));
+  const [allowedClassrooms, setAllowedClassrooms] = useState([]);
+  const [groups, setGroups] = useState([]);
 
-  const [lesson, setLesson] = useState(initialValues);
-  const [error, setError] = useState(initialErrors);
+  const [error, setError] = useState(false);
 
   const handleAdd = () => {
-    console.log("hi");
+    const data = {
+      subject: subject._id.$oid,
+      size: lessonLength,
+      amountPerWeek: amountPerWeek,
+      teacher: teacher._id.$oid,
+      label: label?._id?.$oid || null,
+      allowedClassrooms: allowedClassrooms.map((classroom) => classroom._id.$oid),
+      groups: groups.map((group) => group._id.$oid),
+    };
+    console.log(data);
+  };
+
+  const handleSelectCheckbox = (event) => {
+    const value = event.target.value;
+    console.log(value)
+
+    setAllowedClassrooms(typeof value === "string" ? toJS(value.split(",")) : toJS(value));
+  };
+
+  const handleSelectGroup = (event) => {
+    const value = event.target.value;
+
+    setGroups(typeof value === "string" ? toJS(value.split(",")) : toJS(value));
   };
 
   return (
-    <TableRow>
-      <TableCell component="th" scope="row">
-        {index + 1}.
-      </TableCell>
-      <TableCell component="th" scope="row">
-        <Stack flexDirection={"row"} alignItems={"center"} gap={2}>
-          <HelpIcon sx={{ color: "grey" }} />
-          <TextField
-            value={lesson.lessonName}
-            id="new_subject"
-            label="Dodaj przedmiot"
-            onChange={(e) =>
-              setLesson({ ...lesson, lessonName: e.target.value })
-            }
-            error={error.lessonName}
-          ></TextField>
-          {error.lessonName && (
-            <CustomAlert status={"error"} message={error.lessonName} />
-          )}
-        </Stack>
-      </TableCell>
-      <TableCell>
-        <TextField
-          value={lesson.lessonSize}
-          id="new_size"
-          label="Rozmiar lekcji"
-          onChange={(e) => setLesson({ ...lesson, lessonSize: e.target.value })}
-          error={error.lessonSize}
-        ></TextField>
-        {error.lessonSize && (
-          <CustomAlert status={"error"} message={error.lessonSize} />
-        )}
-      </TableCell>
-      <TableCell>
-        <Select
-          value={lesson.lessonAmountPerWeek}
-          id="new_amount"
-          label="Ilość lekcji w tyg."
-          onChange={(e) =>
-            setLesson({ ...lesson, lessonAmountPerWeek: e.target.value })
-          }
-          error={!!error.lessonAmountPerWeek}
-        >
-          {[1, 2, 3, 4, 5].map((option) => (
-            <MenuItem key={option} value={option}>
-              {option}
-            </MenuItem>
-          ))}
-        </Select>
-        {error.lessonAmountPerWeek && (
-          <CustomAlert status={"error"} message={error.lessonAmountPerWeek} />
-        )}
-      </TableCell>
-      <TableCell>
-        <TextField
-          value={lesson.lessonTeacher}
-          id="new_teacher"
-          label="Nauczyciel"
-          onChange={(e) =>
-            setLesson({ ...lesson, lessonTeacher: e.target.value })
-          }
-          error={error.lessonTeacher}
-        ></TextField>
-        {error.lessonTeacher && (
-          <CustomAlert status={"error"} message={error.lessonTeacher} />
-        )}
-      </TableCell>
-      <TableCell>
-        <TextField
-          value={lesson.lessonLabel}
-          id="new_label"
-          label="Etykieta"
-          onChange={(e) =>
-            setLesson({ ...lesson, lessonLabel: e.target.value })
-          }
-          error={error.lessonLabel}
-        ></TextField>
-        {error.lessonLabel && (
-          <CustomAlert status={"error"} message={error.lessonLabel} />
-        )}
-      </TableCell>
-      <TableCell>
-        <TextField
-          value={lesson.lessonGroups}
-          id="new_groups"
-          label="Grupy"
-          onChange={(e) =>
-            setLesson({ ...lesson, lessonGroups: e.target.value })
-          }
-          error={error.lessonGroups}
-        ></TextField>
-        {error.lessonGroups && (
-          <CustomAlert status={"error"} message={error.lessonGroups} />
-        )}
-      </TableCell>
-      <TableCell align="right">
-        <Stack gap={1} flexDirection={"row"} justifyContent={"flex-end"}>
-          <Button
-            onClick={() => {
-              setLesson("");
-              setError(false);
+    <div className={styles.addLesson}>
+      <h3>Dodaj lekcję</h3>
+      <Stack direction="column" spacing={2}>
+        <FormControl fullWidth>
+          <InputLabel id="subject">Przedmiot</InputLabel>
+          <Select
+            labelId="subject"
+            id="subject"
+            value={subject?._id?.$oid || ""}
+            label="Przedmiot"
+            onChange={(e) => {
+              const selectedSubject = subjects.data.find(
+                (sub) => sub._id.$oid === e.target.value
+              );
+              setSubject(toJS(selectedSubject));
             }}
-            sx={{ color: "grey" }}
+            MenuProps={MenuProps}
           >
-            <RefreshIcon />
-          </Button>
-          <Divider flexItem orientation="vertical" />
-          <Button onClick={handleAdd}>
-            <AddIcon />
-          </Button>
-        </Stack>
-      </TableCell>
-    </TableRow>
+            {subjects.data.map((subject) => (
+              <MenuItem key={subject._id.$oid} value={subject._id.$oid}>
+                {subject.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="lessonLength">Rozmiar lekcji</InputLabel>
+          <Select
+            labelId="lessonLength"
+            id="lessonLength"
+            value={lessonLength}
+            label="Rozmiar lekcji"
+            onChange={(e) => setLessonLength(e.target.value)}
+            MenuProps={MenuProps}
+          >
+            {[1, 2, 3, 4, 5].map((lessonLength) => (
+              <MenuItem
+                key={`${lessonLength}-lessonLength`}
+                value={lessonLength}
+              >
+                {lessonLength}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="amountPerWeek">Ilość lekcji w tygodniu</InputLabel>
+          <Select
+            labelId="amountPerWeek"
+            id="amountPerWeek"
+            value={amountPerWeek}
+            label="Ilość lekcji w tygodniu"
+            onChange={(e) => setAmountPerWeek(e.target.value)}
+            MenuProps={MenuProps}
+          >
+            {[1, 2, 3, 4, 5].map((amountPerWeek) => (
+              <MenuItem
+                key={`${amountPerWeek}-amountPerWeek`}
+                value={amountPerWeek}
+              >
+                {amountPerWeek}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="teacher">Nauczyciel</InputLabel>
+          <Select
+            labelId="teacher"
+            id="teacher"
+            value={teacher?._id?.$oid || ""}
+            label="Nauczyciel"
+            onChange={(e) => {
+              const selectedTeacher = teachers.data.find(
+                (teacher) => teacher._id.$oid === e.target.value
+              );
+              setTeacher(toJS(selectedTeacher));
+            }}
+            MenuProps={MenuProps}
+          >
+            {teachers.data.map((teacher) => (
+              <MenuItem key={teacher._id.$oid} value={teacher._id.$oid}>
+                {teacher.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="label">Etykieta</InputLabel>
+          <Select
+            labelId="label"
+            id="label"
+            value={label?._id?.$oid || ""}
+            label="Etykieta"
+            onChange={(e) => {
+              const selectedLabel = labels.data.find(
+                (label) => label._id.$oid === e.target.value
+              );
+              setLabel(toJS(selectedLabel));
+            }}
+            MenuProps={MenuProps}
+          >
+            {labels.data.map((label) => (
+              <MenuItem key={label._id.$oid} value={label._id.$oid}>
+                {label.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="allowedClassrooms">Dozwolone sale</InputLabel>
+          <Select
+            labelId="allowedClassrooms"
+            id="allowedClassrooms"
+            value={allowedClassrooms}
+            label="Dozwolone sale"
+            onChange={handleSelectCheckbox}
+            MenuProps={MenuProps}
+            input={<OutlinedInput label="Dozwolone sale" />}
+            renderValue={(selected) =>
+              selected.map((item) => item.name).join(", ")
+            }
+            multiple
+          >
+            {toJS(classRooms.data).map((classRoom) => (
+              <MenuItem key={classRoom._id.$oid} value={classRoom}>
+                <Checkbox
+                  checked={allowedClassrooms.some(
+                    (item) => item._id.$oid === classRoom._id.$oid
+                  )}
+                />
+                <ListItemText primary={classRoom.name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel id="groups">Grupy</InputLabel>
+          <Select
+            labelId="groups"
+            id="groups"
+            value={groups}
+            label="Grupy"
+            onChange={handleSelectGroup}
+            MenuProps={MenuProps}
+            input={<OutlinedInput label="Grupy" />}
+            renderValue={(selected) =>
+              selected.map((item) => item.name).join(", ")
+            }
+            multiple
+          >
+            {toJS(singleClass.groups).map((group) => (
+              <MenuItem key={group._id.$oid} value={group}>
+                <Checkbox
+                  checked={groups.some(
+                    (item) => item._id.$oid === group._id.$oid
+                  )}
+                />
+                <ListItemText primary={group.name} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <Button onClick={handleAdd}>Dodaj</Button>
+      </Stack>
+    </div>
   );
-};
+});
 
 export default AddLesson;
