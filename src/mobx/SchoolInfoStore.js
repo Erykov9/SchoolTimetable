@@ -224,6 +224,36 @@ class SchoolInfoStore {
     }
   }
 
+  @action
+  async addLesson(data, dataForMobx) {
+    const newData = {
+      school_plan_config_id: { $oid: this.schoolPlanId },
+      user_id: AuthStore.user.id,
+      ...data,
+    };
+
+    const response = await DataService.postData(newData, 'lesson');
+
+    const newDataMobx = {
+      _id: response._id,
+      school_plan_config_id: { $oid: this.schoolPlanId },
+      user_id: AuthStore.user.id,
+      ...dataForMobx,
+    }
+
+    if (response.error) {
+      return response;
+    }
+
+    this.setLessons(newDataMobx);
+    return response;
+  }
+
+  @action
+  setLessons(lessons) {
+    this.lessons.data = [...this.lessons.data, lessons];
+  }
+
   @computed
   get formattedStudentCount() {
     return `Total students: ${this.studentCount}`;

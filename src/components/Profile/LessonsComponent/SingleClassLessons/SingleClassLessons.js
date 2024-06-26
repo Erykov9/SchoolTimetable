@@ -14,8 +14,9 @@ import {
 } from "@mui/material";
 import AddLesson from "./AddLesson";
 import ModalComponent from "../../../Modal/ModalComponent";
+import { observer } from "mobx-react";
 
-const SingleClassLessons = ({ singleClass, lessons }) => {
+const SingleClassLessons = observer(({ singleClass, lessons }) => {
   const [classLessons, setClassLessons] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const handleClose = () => setIsOpen(false);
@@ -36,7 +37,7 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
     getClassLessons(singleClass._id.$oid);
   }, [singleClass]);
 
-
+  console.log(toJS(classLessons))
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -64,16 +65,16 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
             <TableCell>{row.lessonLabel?.name || "Brak"}</TableCell>
             <TableCell>
               <Stack flexDirection={"row"} gap={1}>
-                {row.groups?.map((group) => (
+                {row?.groupsDetails?.legnth === 0 ? "Brak dodanych grup" :row?.groupDetails?.map((group) => (
                   <Chip label={group?.name} key={`group-${group._id.$oid}`} />
                 ))}
               </Stack>
             </TableCell>
             <TableCell>
-              <Stack flexDirection={"row"} gap={1}>
-                {row.classrooms.length === 0
+              <Stack flexDirection={"row"} gap={1}  >
+                {row?.allowedClassroomsDetails?.length === 0
                   ? "Nie dodano"
-                  : row.classrooms?.map((group) => (
+                  : row.allowedClassroomsDetails?.map((group) => (
                       <Chip label={group?.name} key={`group-${group._id.$oid}`}/>
                     ))}
               </Stack>
@@ -92,6 +93,6 @@ const SingleClassLessons = ({ singleClass, lessons }) => {
       </Table>
     </TableContainer>
   );
-};
+});
 
 export default SingleClassLessons;

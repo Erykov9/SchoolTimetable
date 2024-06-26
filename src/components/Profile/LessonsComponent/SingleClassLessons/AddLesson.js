@@ -39,23 +39,38 @@ const AddLesson = observer(({ singleClass }) => {
   const [lessonLength, setLessonLength] = useState(1);
   const [amountPerWeek, setAmountPerWeek] = useState(1);
   const [teacher, setTeacher] = useState(toJS(teachers.data[0]));
-  const [label, setLabel] = useState(toJS(labels.data[0]));
+  const [label, setLabel] = useState(null);
   const [allowedClassrooms, setAllowedClassrooms] = useState([]);
   const [groups, setGroups] = useState([]);
+  console.log(toJS(singleClass))
 
   const [error, setError] = useState(false);
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
     const data = {
-      subject: subject._id.$oid,
+      lesson_type_id: subject._id,
       size: lessonLength,
       amountPerWeek: amountPerWeek,
-      teacher: teacher._id.$oid,
-      label: label?._id?.$oid || null,
-      allowedClassrooms: allowedClassrooms.map((classroom) => classroom._id.$oid),
-      groups: groups.map((group) => group._id.$oid),
+      teacher_id: teacher._id,
+      lesson_label_id: label?._id || null,
+      allowedClassrooms: allowedClassrooms.map((classroom) => classroom._id),
+      groups: groups.map((group) => group._id),
+      student_class_id: singleClass._id,
     };
-    console.log(data);
+
+    const dataForMobx = {
+      lessonType: subject,
+      size: lessonLength,
+      amountPerWeek: amountPerWeek,
+      teacher: teacher,
+      lessonLabel: label,
+      allowedClassrooms: allowedClassrooms,
+      groups: groups,
+    };
+
+    const response = await SchoolInfoStore.addLesson(data, dataForMobx);
+
+    console.log(response);
   };
 
   const handleSelectCheckbox = (event) => {
@@ -160,12 +175,12 @@ const AddLesson = observer(({ singleClass }) => {
           </Select>
         </FormControl>
         <FormControl fullWidth>
-          <InputLabel id="label">Etykieta</InputLabel>
+          <InputLabel id="label">Etykieta (opcionalnie)</InputLabel>
           <Select
             labelId="label"
             id="label"
             value={label?._id?.$oid || ""}
-            label="Etykieta"
+            label="Etykieta (opcionalnie)"
             onChange={(e) => {
               const selectedLabel = labels.data.find(
                 (label) => label._id.$oid === e.target.value
@@ -174,6 +189,9 @@ const AddLesson = observer(({ singleClass }) => {
             }}
             MenuProps={MenuProps}
           >
+            <MenuItem value={null}>
+            {"BRAK"}
+            </MenuItem>
             {labels.data.map((label) => (
               <MenuItem key={label._id.$oid} value={label._id.$oid}>
                 {label.name}
